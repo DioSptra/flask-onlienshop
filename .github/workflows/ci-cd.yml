@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install SSH Client
+      run: sudo apt-get install -y openssh-client
+
+    - name: Deploy to EC2 Server
+      env:
+        DEPLOY_SERVER: ${{ secrets.DEPLOY_SERVER_IP }}
+        DEPLOY_USER: ${{ secrets.DEPLOY_USER_UBUNTU }}
+        SSH_KEY: ${{ secrets.SSH_KEY_UBUNTU }}
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -t rsa $DEPLOY_SERVER >> ~/.ssh/known_hosts
+        echo "$SSH_KEY" | tr -d '\r' > temp_key
+        chmod 600 temp_key
+
+        # Copy project files to EC2 (opsional: bisa git pull juga langsung di server)
+        scp -i temp_key -r . $DEPLOY_USER@$DEPLOY_SERVER:/home/ubuntu/flask_onlineshop_app
+
+        # Jalankan docker-compose di server
+        ssh -i temp_key $DEPLOY_USER@$DEPLOY_SERVER 'cd /home/ubuntu/flask_onlineshop_app && docker-compose up --build -d'
