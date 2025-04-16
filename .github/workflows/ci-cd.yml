@@ -28,7 +28,7 @@ jobs:
         chmod 600 temp_key
 
         # Copy project files to EC2 (opsional: bisa git pull juga langsung di server)
-        scp -i temp_key -r . $DEPLOY_USER@$DEPLOY_SERVER:/home/ubuntu/flask_shop_postgres
+        scp -i temp_key -r * $DEPLOY_USER@$DEPLOY_SERVER:/home/ubuntu/flask_shop_postgres
 
         ssh -i temp_key $DEPLOY_USER@$DEPLOY_SERVER 'cd /home/ubuntu/flask_shop_postgres && bash deploy.sh'
 
