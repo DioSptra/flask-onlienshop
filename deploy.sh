@@ -4,6 +4,18 @@ echo "🚀 Mulai proses deployment..."
 
 cd /home/ubuntu/flask_shop_postgres || exit 1
 
+# === INSTALL DOCKER ===
+if ! command -v docker &> /dev/null; then
+    echo "🐳 Installing Docker..."
+    sudo apt-get update
+    sudo apt-get install -y docker.io
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    sudo usermod -aG docker $USER
+else
+    echo "✅ Docker sudah terinstall."
+fi
+
 # --- Install docker-compose ---
 if ! command -v docker-compose &> /dev/null; then
     echo "🔧 Installing docker-compose..."
