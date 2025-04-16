@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from prometheus_flask_exporter import PrometheusMetrics
 import logging, os
 import psycopg2
-from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
