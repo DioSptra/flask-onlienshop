@@ -15,6 +15,19 @@ if ! command -v docker &> /dev/null; then
 else
     echo "✅ Docker sudah terinstall."
 fi
+echo "🧹 Cek dan hapus container lama kalau ada..."
+
+# Daftar service yang mau lo bersihin
+SERVICES=("web" "db" "prometheus" "grafana")
+
+for SERVICE in "${SERVICES[@]}"; do
+    CONTAINER_NAME="flask_shop_postgres_${SERVICE}_1"
+    if docker ps -a --format '{{.Names}}' | grep -q "^$CONTAINER_NAME$"; then
+        echo "🛑 Stop & remove container: $CONTAINER_NAME"
+        docker stop $CONTAINER_NAME
+        docker rm $CONTAINER_NAME
+    fi
+done
 
 # --- Install docker-compose ---
 if ! command -v docker-compose &> /dev/null; then
